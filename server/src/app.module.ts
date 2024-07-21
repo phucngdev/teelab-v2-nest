@@ -8,6 +8,7 @@ import { ProductModule } from './modules/products/product.module';
 import { CategoryModule } from './modules/categories/category.module';
 import { OrderModule } from './modules/orders/order.module';
 import { PaymentModule } from './modules/payments/payment.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -22,6 +23,15 @@ import { PaymentModule } from './modules/payments/payment.module';
       redis: {
         host: 'localhost',
         port: 6379,
+      },
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        auth: {
+          user: 'freelancerit.dev@gmail.com',
+          pass: 'hfxl woet rfzc nlsw',
+        },
       },
     }),
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),

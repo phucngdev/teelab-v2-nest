@@ -18,6 +18,7 @@ import { Size } from 'src/entities/size.entity';
 import { Product } from 'src/entities/product.entity';
 import { Color } from 'src/entities/color.entity';
 import { User } from 'src/entities/user.entity';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class PaymentRepository {
@@ -28,7 +29,10 @@ export class PaymentRepository {
   private colorRepos: Repository<Color>;
   private useRepos: Repository<User>;
 
-  constructor(@Inject('DATA_SOURCE') private readonly dataSource: DataSource) {
+  constructor(
+    @Inject('DATA_SOURCE') private readonly dataSource: DataSource,
+    private readonly mailerService: MailerService
+  ) {
     this.orderRepos = dataSource.getRepository(Order);
     this.orderDetailRepos = dataSource.getRepository(OrderDetail);
     this.sizeRepos = dataSource.getRepository(Size);
@@ -43,6 +47,57 @@ export class PaymentRepository {
     key2: 'trMrHtvjo6myautxDUiAcYsVtaeQ8nhf',
     endpoint: 'https://sb-openapi.zalopay.vn/v2/create', // chạy với dev
   };
+
+  async sendOrderConfirmationEmail(order: Order): Promise<void> {
+    let productDetails = '';
+
+    // Loop through each order detail to build the product list
+    for (const detail of order.order_details) {
+      productDetails += `
+      <tr>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: center">${detail.product.product_name}</td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: center">${detail.color.color_name}</td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: center">${detail.size.size_name}</td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: center">${detail.quantity}</td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: center">${detail.product.price}</td>
+      </tr>
+    `;
+    }
+
+    const template = `
+    <div style="font-family: Arial, sans-serif; color: #333;">
+      <h1>Order Confirmation</h1>
+      <p>Hi ${order.name},</p>
+      <p>Cảm ơn bạn đã đặt hàng, Mã đơn hàng của bạn là: <strong>${order.order_id}</strong>.</p>
+      <h2>Order Details:</h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th style="border: 1px solid #ddd; padding: 8px; text-align: center">Tên sản phẩm</th>
+            <th style="border: 1px solid #ddd; padding: 8px; text-align: center">Màu</th>
+            <th style="border: 1px solid #ddd; padding: 8px; text-align: center">Size</th>
+            <th style="border: 1px solid #ddd; padding: 8px; text-align: center">SLượng</th>
+            <th style="border: 1px solid #ddd; padding: 8px; text-align: center">Giá</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${productDetails}
+        </tbody>
+      </table>
+      <p><strong>Tổng giá trị đơn hàng: </strong>${order.total_amount}</p>
+      <p>Cảm ơn bạn đã tin tưởng và ủng hộ Teelab</p>
+    </div>`;
+    await this.mailerService.sendMail({
+      to: order.email,
+      subject: 'Order Confirmation',
+      html: template,
+      context: {
+        orderId: order.order_id,
+        name: order.name,
+      },
+    });
+  }
+
   async zalopayRepo(body: any, id: string): Promise<any> {
     const { total_amount } = body;
 
@@ -193,6 +248,19 @@ export class PaymentRepository {
           await this.sizeRepos.save(size);
           console.log('save size');
         }
+
+        const populatedOrder = await this.orderRepos.findOne({
+          where: { order_id: order.order_id },
+          relations: [
+            'order_details',
+            'order_details.product',
+            'order_details.color',
+            'order_details.size',
+          ],
+        });
+
+        await this.sendOrderConfirmationEmail(populatedOrder);
+        console.log('Email xác nhận đơn hàng đã được gửi');
 
         result['return_code'] = 1;
         result['return_message'] = 'success';
