@@ -12,8 +12,12 @@ export class OrderService {
     private readonly jwtService: JwtService
   ) {}
 
-  async getAllOrdersService(): Promise<Order[]> {
-    return await this.orderRepos.findAll();
+  async getAllOrdersService(page: number, limit: number): Promise<Order[]> {
+    return await this.orderRepos.findAll(page, limit);
+  }
+
+  async getAllNewOrdersService(status: number): Promise<Order[]> {
+    return await this.orderRepos.findAllStatusOrder(status);
   }
 
   async getOrderByIdService(orderId: string): Promise<Order> {

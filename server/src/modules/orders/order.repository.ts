@@ -30,8 +30,50 @@ export class OrderRepository {
     this.userRepos = dataSource.getRepository(User);
   }
 
-  async findAll(): Promise<Order[]> {
+  async findAll(page: number, limit: number): Promise<Order[]> {
+    let result;
+    if (page && limit) {
+      const [orders, totalItems] = await this.orderRepos.findAndCount({
+        take: limit,
+        skip: (page - 1) * limit,
+        relations: [
+          'order_details',
+          'user',
+          'order_details.product',
+          'order_details.product.category',
+          'order_details.size',
+          'order_details.color',
+        ],
+        order: {
+          created_at: 'DESC',
+        },
+      });
+      result = {
+        data: orders,
+        totalItems,
+        currentPage: page,
+        pageSize: limit,
+      };
+    } else {
+      result = await this.orderRepos.find({
+        relations: [
+          'order_details',
+          'user',
+          'order_details.product',
+          'order_details.product.category',
+          'order_details.size',
+          'order_details.color',
+        ],
+      });
+    }
+
+    return result;
+  }
+
+  async findAllStatusOrder(status: number): Promise<Order[]> {
+    let result;
     const orders = await this.orderRepos.find({
+      where: { status: status },
       relations: [
         'order_details',
         'user',
@@ -40,8 +82,17 @@ export class OrderRepository {
         'order_details.size',
         'order_details.color',
       ],
+      order: {
+        created_at: 'DESC',
+      },
     });
-    return orders;
+    result = {
+      data: orders,
+      totalItems: orders.length,
+      currentPage: 1,
+      pageSize: orders.length,
+    };
+    return result;
   }
 
   async findById(orderId: string): Promise<Order> {
@@ -68,7 +119,7 @@ export class OrderRepository {
     return order;
   }
 
-  async createOne(data: any, id: any, status?: number): Promise<Order> {
+  async createOne(data: any, id: any): Promise<Order> {
     try {
       const user = await this.userRepos.findOne({
         where: { user_id: id },
@@ -81,12 +132,13 @@ export class OrderRepository {
         total_amount: data.total_amount,
         note: data.note || '',
         name: data.name,
+        email: data.email,
         phone: data.phone,
         address: data.address,
         city: data.city,
         district: data.district,
         ward: data.ward,
-        status: status || data.status,
+        status: data.status,
         user: user,
       });
       console.log('Tạo đơn hàng:', order);

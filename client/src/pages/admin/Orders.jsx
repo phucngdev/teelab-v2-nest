@@ -1,8 +1,8 @@
 import { FieldTimeOutlined, ShopOutlined } from "@ant-design/icons";
-import { Button, Input } from "antd";
-import React, { useEffect } from "react";
+import { Button, Input, Pagination } from "antd";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllOrder } from "../../services/order.service";
+import { getAllOrder, getAllStatusOrder } from "../../services/order.service";
 import moment from "moment";
 import formatPrice from "../../utils/formatPrice";
 import { useNavigate } from "react-router-dom";
@@ -11,12 +11,27 @@ const Orders = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [page, setPage] = useState({
+    page: 1,
+    limit: 20,
+  });
+
   const fetchData = async () => {
-    await dispatch(getAllOrder());
+    await dispatch(
+      getAllOrder({
+        page: page.page,
+        limit: page.limit,
+      })
+    );
   };
+  const fetchNewData = async (status) => {
+    await dispatch(getAllStatusOrder(status));
+  };
+
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [page]);
+
   const orders = useSelector((state) => state.order.data);
   console.log(orders);
   return (
@@ -28,8 +43,38 @@ const Orders = () => {
           </h3>
           <Input className="w-1/5" placeholder="Tìm kiếm" />
         </div>
+        <div className="flex gap-5 items-center mb-5">
+          <Button
+            onClick={() => {
+              fetchData();
+            }}
+          >
+            Tất cả đơn hàng
+          </Button>
+          <Button
+            onClick={() => {
+              fetchNewData(0);
+            }}
+          >
+            Đơn hàng mới
+          </Button>
+          <Button
+            onClick={() => {
+              fetchNewData(1);
+            }}
+          >
+            Đơn hàng đang vận chuyển
+          </Button>
+          <Button
+            onClick={() => {
+              fetchNewData(2);
+            }}
+          >
+            Đơn hàng hoàn thành
+          </Button>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {orders?.map((od, index) => (
+          {orders?.data?.map((od, index) => (
             <div
               key={od.order_id}
               onClick={() => navigate(`/admin/don-hang/${od.order_id}`)}
@@ -79,6 +124,19 @@ const Orders = () => {
               </div>
             </div>
           ))}
+        </div>
+        <div className="flex w-full justify-center mt-7">
+          <Pagination
+            defaultCurrent={1}
+            defaultPageSize={12}
+            total={orders?.totalItems}
+            onChange={(page, limit) => {
+              setPage({
+                page,
+                limit,
+              });
+            }}
+          />
         </div>
       </div>
     </>

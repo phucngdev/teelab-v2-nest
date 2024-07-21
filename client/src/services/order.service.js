@@ -21,14 +21,29 @@ export const getOneOrder = createAsyncThunk("getOne/order", async (id) => {
   }
 });
 
-export const getAllOrder = createAsyncThunk("getAll/order", async () => {
-  try {
-    const response = await BaseUrl.get(`order`);
-    return response.data;
-  } catch (error) {
-    message.error("Lỗi server");
+export const getAllOrder = createAsyncThunk(
+  "getAll/order",
+  async ({ page, limit }) => {
+    try {
+      const response = await BaseUrl.get(`order?page=${page}&limit=${limit}`);
+      return response.data;
+    } catch (error) {
+      message.error("Lỗi server");
+    }
   }
-});
+);
+
+export const getAllStatusOrder = createAsyncThunk(
+  "getAllNew/order",
+  async (status) => {
+    try {
+      const response = await BaseUrl.get(`order/new?status=${status}`);
+      return response.data;
+    } catch (error) {
+      message.error("Lỗi server");
+    }
+  }
+);
 
 export const updateStatus = createAsyncThunk(
   "update/order",

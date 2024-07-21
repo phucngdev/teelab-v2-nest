@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -27,8 +28,19 @@ export class OrderController {
   // @UseGuards(JwtAuthGuard)
   @Get()
   @HttpCode(200)
-  async getAllOrdersController(): Promise<Order[]> {
-    return await this.orderService.getAllOrdersService();
+  async getAllOrdersController(
+    @Query('page') page: number,
+    @Query('limit') limit: number
+  ): Promise<Order[]> {
+    return await this.orderService.getAllOrdersService(page, limit);
+  }
+
+  @Get('/new')
+  @HttpCode(200)
+  async getAllNewOrdersController(
+    @Query('status') status: number
+  ): Promise<Order[]> {
+    return await this.orderService.getAllNewOrdersService(status);
   }
 
   @UseGuards(JwtAuthGuard)
