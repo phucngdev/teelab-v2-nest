@@ -28,6 +28,9 @@ export class Order {
   name: string;
 
   @Column()
+  email: string;
+
+  @Column()
   phone: string;
 
   @Column()

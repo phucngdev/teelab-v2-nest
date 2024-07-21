@@ -27,10 +27,8 @@ export class PaymentRepository {
   private productRepos: Repository<Product>;
   private colorRepos: Repository<Color>;
   private useRepos: Repository<User>;
-  constructor(
-    @Inject('DATA_SOURCE') private readonly dataSource: DataSource,
-    private readonly OrderService: OrderService
-  ) {
+
+  constructor(@Inject('DATA_SOURCE') private readonly dataSource: DataSource) {
     this.orderRepos = dataSource.getRepository(Order);
     this.orderDetailRepos = dataSource.getRepository(OrderDetail);
     this.sizeRepos = dataSource.getRepository(Size);
@@ -52,8 +50,9 @@ export class PaymentRepository {
       body.items.length > 0
         ? body.items.map((item) => ({
             product_id: item.product.product_id,
-            size: item.size.size_id,
-            color: item.color.color_id,
+            size_id: item.size.size_id,
+            color_id: item.color.color_id,
+            count: item.count,
           }))
         : [{}];
 
@@ -130,9 +129,8 @@ export class PaymentRepository {
         // let dataJson = JSON.parse(dataStr, this.config.key2);
         let dataJson = JSON.parse(dataStr);
         console.log('dataJson: ', dataJson);
-
         const userId = dataJson.app_user;
-
+        const productData = JSON.parse(dataJson.item);
         // Tạo đơn hàng sau khi thanh toán thành công, sử dụng dữ liệu từ request
         const orderData = JSON.parse(dataJson.embed_data);
         console.log(orderData);
@@ -150,6 +148,7 @@ export class PaymentRepository {
           total_amount: dataJson.amount,
           note: orderData.note || '',
           name: orderData.name,
+          email: orderData.email,
           phone: orderData.phone,
           address: orderData.address,
           city: orderData.city,
@@ -163,9 +162,12 @@ export class PaymentRepository {
         // Lưu đơn hàng chính vào cơ sở dữ liệu
         await this.orderRepos.save(order);
         console.log('save order');
+        console.log(dataJson.item);
 
         // Xử lý các mục hàng trong đơn hàng
-        for (const item of dataJson.item) {
+        for (const item of productData) {
+          console.log('item ', item);
+
           const product = await this.productRepos.findOneBy({
             product_id: item.product_id,
           });
@@ -175,7 +177,7 @@ export class PaymentRepository {
           const size = await this.sizeRepos.findOneBy({
             size_id: item.size_id,
           });
-          console.log('tìm thấy tt', size);
+          console.log('tìm thấy tt', size, color, product);
 
           const orderDetail = await this.orderDetailRepos.create({
             order: order,

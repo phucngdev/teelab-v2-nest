@@ -1,9 +1,10 @@
 import { Button, Empty, Input, Tabs } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import ItemProduct from "./item/ItemProduct";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProduct } from "../../../../services/product.service";
+import { getAllCategory } from "../../../../services/category.service";
 
 const ListProduct = () => {
   const navigate = useNavigate();
@@ -11,34 +12,22 @@ const ListProduct = () => {
   // call api
   const fetchData = async () => {
     await dispatch(getAllProduct({ page: 0, limit: 0 }));
+    await dispatch(getAllCategory());
   };
   useEffect(() => {
     fetchData();
   }, []);
   const categorys = useSelector((state) => state.category.data);
+  console.log(categorys);
   const products = useSelector((state) => state.product.data);
   const [active, setActive] = useState("");
 
-  const [listProduct, setListProduct] = useState(() => {
-    const list =
-      active === "Tất cả sản phẩm"
-        ? products.products
-        : products?.products?.filter(
-            (p) => p.category.category_name === active.toLowerCase()
-          );
-    return list || [];
-  });
+  const [listProduct, setListProduct] = useState([]);
 
-  useEffect(() => {
-    setListProduct(
-      active === "Tất cả sản phẩm"
-        ? products.products
-        : products?.products?.filter(
-            (p) => p.category.category_name === active.toLowerCase()
-          )
-    );
+  useLayoutEffect(() => {
+    setListProduct(active === "Tất cả sản phẩm" && products.products);
   }, [products, active]);
-  console.log(listProduct);
+  console.log(active);
   return (
     <>
       <div className="bg-white rounded-lg shadow p-4 md:p-6 xl:p-8 my-6">
@@ -60,7 +49,9 @@ const ListProduct = () => {
         <div className="flex items-center gap-8 text-black my-4">
           <button
             className={`${
-              active === "" ? "text-blue-600 border-b border-blue-600" : ""
+              active === "Tất cả sản phẩm"
+                ? "text-blue-600 border-b border-blue-600"
+                : ""
             }`}
             onClick={() => setActive("Tất cả sản phẩm")}
           >
@@ -74,7 +65,7 @@ const ListProduct = () => {
                 setListProduct(cate.products);
               }}
               className={`${
-                active === cate.category_id
+                active === cate.category_name
                   ? "text-blue-600 border-b border-blue-600"
                   : ""
               }`}

@@ -13,6 +13,7 @@ export const createOrder = createAsyncThunk("create/order", async (data) => {
 
 export const getOneOrder = createAsyncThunk("getOne/order", async (id) => {
   try {
+    console.log(id);
     const response = await BaseUrl.get(`order/${id}`);
     return response.data;
   } catch (error) {
@@ -28,3 +29,15 @@ export const getAllOrder = createAsyncThunk("getAll/order", async () => {
     message.error("Lỗi server");
   }
 });
+
+export const updateStatus = createAsyncThunk(
+  "update/order",
+  async ({ id, data }) => {
+    try {
+      const response = await BaseUrl.put(`order/${id}`, data);
+      return response;
+    } catch (error) {
+      message.error("Lỗi server");
+    }
+  }
+);

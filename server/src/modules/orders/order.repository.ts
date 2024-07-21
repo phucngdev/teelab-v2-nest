@@ -36,6 +36,7 @@ export class OrderRepository {
         'order_details',
         'user',
         'order_details.product',
+        'order_details.product.category',
         'order_details.size',
         'order_details.color',
       ],
@@ -43,15 +44,28 @@ export class OrderRepository {
     return orders;
   }
 
-  async findById(userId: string, orderId: string): Promise<Order> {
-    // const user = await this.userRepos.findById(userId);
-    // if (!user) {
-    //   throw new NotFoundException("Not found user");
-    // }
+  async findById(orderId: string): Promise<Order> {
     return await this.orderRepos.findOne({
       where: { order_id: orderId },
-      relations: ['order_details', 'order_details.product'],
+      relations: [
+        'order_details',
+        'order_details.product',
+        'order_details.product.category',
+        'order_details.size',
+        'order_details.color',
+      ],
     });
+  }
+  async updateStatus(orderId: string, data: any): Promise<Order> {
+    const order = await this.orderRepos.findOne({
+      where: { order_id: orderId },
+    });
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+    order.status = data.status;
+    await this.orderRepos.save(order);
+    return order;
   }
 
   async createOne(data: any, id: any, status?: number): Promise<Order> {

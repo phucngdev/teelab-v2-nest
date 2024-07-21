@@ -7,6 +7,7 @@ import {
   HttpCode,
   Param,
   Post,
+  Put,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -33,15 +34,18 @@ export class OrderController {
   @UseGuards(JwtAuthGuard)
   @Get('/:id')
   @HttpCode(200)
-  async getOrderByIdController(
-    @Headers('authorization') header: string,
-    @Param('id') orderId: string
+  async getOrderByIdController(@Param('id') orderId: string): Promise<Order> {
+    return await this.orderService.getOrderByIdService(orderId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('/:id')
+  @HttpCode(200)
+  async updateStatusController(
+    @Param('id') orderId: string,
+    @Body() data: any
   ): Promise<Order> {
-    const tokenSplit = header.split(' ')[1];
-    if (!tokenSplit) {
-      throw new UnauthorizedException('Not found token');
-    }
-    return await this.orderService.getOrderByIdService(tokenSplit, orderId);
+    return await this.orderService.updateStatusService(orderId, data);
   }
 
   @UseGuards(JwtAuthGuard)

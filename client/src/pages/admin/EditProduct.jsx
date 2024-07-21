@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import Editor from "../../components/admin/create_product/editor/Editor";
 import { LoadingOutlined, PlusOutlined, ShopOutlined } from "@ant-design/icons";
 import { Flex, message, Upload, Button, Input, Select, Image } from "antd";
@@ -49,7 +49,7 @@ const EditProduct = () => {
   const [description, setDescription] = useState("");
   console.log(productVariants);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (product) {
       setImageUrls(product.images || []);
       setDescription(product.description || "");

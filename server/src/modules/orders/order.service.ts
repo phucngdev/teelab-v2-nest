@@ -16,9 +16,12 @@ export class OrderService {
     return await this.orderRepos.findAll();
   }
 
-  async getOrderByIdService(token: string, orderId: string): Promise<Order> {
-    const payloadToken = this.jwtService.decode(token);
-    return await this.orderRepos.findById(payloadToken.user_id, orderId);
+  async getOrderByIdService(orderId: string): Promise<Order> {
+    return await this.orderRepos.findById(orderId);
+  }
+
+  async updateStatusService(orderId: string, data: any): Promise<Order> {
+    return await this.orderRepos.updateStatus(orderId, data);
   }
 
   async createOrderService(data: any, token: string): Promise<Order> {
