@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { checkPaymentZalopay } from "../../services/payment.service";
 import { Button, Result } from "antd";
@@ -8,24 +8,25 @@ import { LoadingOutlined } from "@ant-design/icons";
 const PayCheck = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const [appTransId, setAppTransId] = useState(null);
-  const [status, setStatus] = useState(null);
+  const [status, setStatus] = useState(false);
   const [pending, setPending] = useState(true);
-  useEffect(() => {
+  const appTransId = useMemo(() => {
     const searchParams = new URLSearchParams(location.search);
     const apptransid = searchParams.get("apptransid");
-    setAppTransId(apptransid);
+    return apptransid;
   }, [location]);
 
   const fetchData = async () => {
     if (appTransId) {
       const response = await dispatch(checkPaymentZalopay(appTransId));
       setStatus(response.payload);
+      console.log(response);
     }
   };
   useEffect(() => {
     fetchData();
   }, []);
+  console.log(status);
 
   useEffect(() => {
     if (status) {
@@ -36,8 +37,10 @@ const PayCheck = () => {
   return (
     <>
       {pending && (
-        <div className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-          <LoadingOutlined />
+        <div className="h-60 relative">
+          <div className="absolute text-3xl z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
+            <LoadingOutlined />
+          </div>
         </div>
       )}
       {status && (
