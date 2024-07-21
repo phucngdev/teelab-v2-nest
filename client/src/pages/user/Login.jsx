@@ -23,13 +23,14 @@ const Login = () => {
   const currentRef = useRef();
   const [pending, setPending] = useState(false);
   const [isLogin, setIsLogin] = useState(() => {
-    const checkLogin = Cookies.get("isLogin") || false;
+    const checkLogin = Cookies.get("AT") || false;
     return checkLogin;
   });
 
   useEffect(() => {
     if (isLogin) {
-      navigate("/admin");
+      const { role } = jwtDecode(isLogin);
+      role === 1 ? navigate("/") : navigate("/admin");
     }
   }, []);
 

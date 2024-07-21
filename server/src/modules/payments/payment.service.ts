@@ -7,8 +7,8 @@ import { Payment } from 'src/entities/payment.entity';
 export class PaymentService {
   constructor(private readonly paymentRepos: PaymentRepository) {}
 
-  async zalopayService(data: any): Promise<any> {
-    return await this.paymentRepos.zalopayRepo(data);
+  async zalopayService(data: any, id: string): Promise<any> {
+    return await this.paymentRepos.zalopayRepo(data, id);
   }
 
   async zalopayCallbackService(data: any): Promise<any> {

@@ -18,9 +18,10 @@ import { JwtService } from '@nestjs/jwt';
 
 @Controller('/order')
 export class OrderController {
-  private readonly jwtService: JwtService;
-
-  constructor(private readonly orderService: OrderService) {}
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly jwtService: JwtService
+  ) {}
 
   // @UseGuards(JwtAuthGuard)
   @Get()
@@ -55,7 +56,10 @@ export class OrderController {
       throw new UnauthorizedException('Not found token');
     }
     const payloadToken = this.jwtService.decode(token);
-    return await this.orderService.createOrderService(data, token);
+    return await this.orderService.createOrderService(
+      data,
+      payloadToken.user_id
+    );
   }
 
   @UseGuards(JwtAuthGuard)
