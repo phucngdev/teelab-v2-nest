@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import Nav from "../../layouts/admin/Nav";
 import Footer from "../../layouts/admin/Footer";
 import { jwtDecode } from "jwt-decode";
+import { useSelector } from "react-redux";
 
 const PrivateRouter = () => {
   const [isToken, setIsToken] = useState(() => {

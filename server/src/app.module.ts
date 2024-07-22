@@ -34,7 +34,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         },
       },
     }),
-    ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
+    ConfigModule.forRoot({ envFilePath: '.env.development', isGlobal: true }),
   ],
 })
 export class AppModule {}

@@ -44,7 +44,12 @@ export class UserService {
 
   async updateUserService(id: string, dataUpdate: UserDto): Promise<boolean> {
     const result = await this.userRepository.updateOne(id, dataUpdate);
-    return !!result
+    return !!result;
+  }
+
+  async updateStatusService(id: string, status: number): Promise<boolean> {
+    const result = await this.userRepository.updateStatus(id, status);
+    return !!result;
   }
 
   async updateUserNameService(

@@ -58,6 +58,15 @@ export class UserRepository {
     }
   }
 
+  async updateStatus(id: string, status: number): Promise<UpdateResult> {
+    const findUser = await this.userRepos.findOneBy({ user_id: id });
+    if (!findUser) {
+      throw new NotFoundException('Not Found User With This Id');
+    } else {
+      return await this.userRepos.update({ user_id: id }, { status: status });
+    }
+  }
+
   async updateUserName(id: string, userName: string): Promise<UpdateResult> {
     const findUser = await this.userRepos.findOneBy({ user_id: id });
     if (!findUser) {

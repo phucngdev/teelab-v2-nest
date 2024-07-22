@@ -44,11 +44,7 @@ const Login = () => {
       password: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string()
-        .matches(
-          /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-          "Email không hợp lệ"
-        )
+      email: Yup.string().email("Email không hợp lệ")
         .required("Email không được để trống"),
       password: Yup.string().required("Mật khẩu không được để trống"),
     }),

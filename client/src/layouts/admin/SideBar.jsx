@@ -123,6 +123,20 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <NavLink
+                    to="/admin/tai-khoan"
+                    className="text-base text-gray-900 font-normal rounded-lg hover:bg-gray-100 flex items-center p-2 group "
+                  >
+                    <UsergroupAddOutlined className="w-6 h-6 text-gray-500 flex-shrink-0 group-hover:text-gray-900 transition duration-75" />
+                    <span className="ml-3 flex-1 whitespace-nowrap">
+                      Tài khoản
+                    </span>
+                    <span className="bg-gray-200 text-gray-800 ml-3 text-sm font-medium inline-flex items-center justify-center px-2 rounded-full">
+                      admin
+                    </span>
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
                     to="/admin/nhan-su"
                     className="text-base text-gray-900 font-normal rounded-lg hover:bg-gray-100 flex items-center p-2 group "
                   >

@@ -44,8 +44,8 @@ export class UserController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
-  @UseGuards(RoleGuard)
+  // @UseGuards(JwtAuthGuard)
+  // @UseGuards(RoleGuard)
   @Put('/:id')
   @HttpCode(200)
   async updateUserController(
@@ -53,6 +53,15 @@ export class UserController {
     @Param('id') id: string
   ) {
     return await this.userService.updateUserService(id, userDto);
+  }
+  
+  @Put('/:id/status/:status')
+  @HttpCode(200)
+  async updateStatusController(
+    @Param('id') id: string,
+    @Param('status') status: number
+  ) {
+    return await this.userService.updateStatusService(id, status);
   }
 
   @UseGuards(JwtAuthGuard)

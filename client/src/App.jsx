@@ -25,6 +25,7 @@ import Orders from "./pages/admin/Orders";
 import OrderDetail from "./pages/admin/OrderDetail";
 import PayCheck from "./pages/user/PayCheck";
 import EditProduct from "./pages/admin/EditProduct";
+import User from "./pages/admin/User";
 
 function App() {
   const location = useLocation();
@@ -96,6 +97,7 @@ function App() {
           <Route path="san-pham/:id" element={<Products />} />
           <Route path="tao-moi-san-pham" element={<CreateProduct />} />
           <Route path="chinh-sua-san-pham/:id" element={<EditProduct />} />
+          <Route path="tai-khoan" element={<User />} />
         </Route>
       </Routes>
     </>
