@@ -26,6 +26,7 @@ import OrderDetail from "./pages/admin/OrderDetail";
 import PayCheck from "./pages/user/PayCheck";
 import EditProduct from "./pages/admin/EditProduct";
 import User from "./pages/admin/User";
+import { useSelector } from "react-redux";
 
 function App() {
   const location = useLocation();
@@ -33,6 +34,9 @@ function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location.pathname]);
+
+  const categories = useSelector((state) => state.category.data);
+  console.log(categories);
 
   return (
     <>

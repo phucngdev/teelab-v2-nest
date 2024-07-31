@@ -35,10 +35,19 @@ export const updateProduct = createAsyncThunk(
   }
 );
 
+export const searchProduct = createAsyncThunk("search", async (q) => {
+  try {
+    const response = await BaseUrl.get(`product/search?q=${q}`);
+    return response.data;
+  } catch (error) {
+    message.error("Lỗi server");
+  }
+});
+
 export const deleteProduct = createAsyncThunk("delete/product", async (id) => {
   try {
-    const response = await BaseUrl.delete(`product/${id}`);
-    return response.data;
+    const response = await BaseUrl.delete(`product/delete/${id}`);
+    return response;
   } catch (error) {
     message.error("Lỗi server");
   }

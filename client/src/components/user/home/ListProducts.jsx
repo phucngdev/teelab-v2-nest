@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useLayoutEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Empty, Tooltip, message } from "antd";
@@ -24,7 +24,7 @@ const ListProducts = ({ path, category }) => {
     return list || [];
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setListProduct(
       products.products
         ?.filter((p) => p.category.category_name === category.toLowerCase())
@@ -33,7 +33,8 @@ const ListProducts = ({ path, category }) => {
   }, [products, category]);
 
   return (
-    listProduct?.length > 0 && (
+    listProduct &&
+    listProduct.length > 0 && (
       <>
         <div className="container mx-auto mb-[50px]">
           <div className="flex justify-between items-center">

@@ -1,16 +1,17 @@
-import { Button, Input, message, notification } from "antd";
+import { Button, Input, Tooltip, message, notification } from "antd";
 import React, { useEffect, useState } from "react";
-import TableItems from "../../components/account/table/TableItems";
+import TableItems from "../../components/admin/account/table/TableItems";
 import BaseUrl from "../../apis/axios";
 import {
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   LockOutlined,
   UnlockOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers } from "../../services/user.service";
-import Overview from "../../components/account/Overview";
+import Overview from "../../components/admin/account/Overview";
 
 export default function User() {
   const dispatch = useDispatch();
@@ -72,23 +73,34 @@ export default function User() {
     {
       title: "Chức năng",
       render: (text, record) => (
-        <div className="flex gap-2 justify-center">
-          <Button
-            onClick={() =>
-              handleChangeStatusUser(record.user_id, record.status)
-            }
+        <div className="flex items-center gap-2">
+          <Tooltip title="Danh sách đơn hàng" color="#2db7f5">
+            <Button>
+              <EyeOutlined />
+            </Button>
+          </Tooltip>
+          <Tooltip
+            title={record.status == 1 ? "Khoá tài khoản" : "Mở khoá"}
+            color="#f50"
           >
-            {record.status == 1 ? <LockOutlined /> : <UnlockOutlined />}
-          </Button>
-          <Button danger onClick={() => handleDeleteUser(record.user_id)}>
-            <DeleteOutlined />
-          </Button>
+            <Button
+              onClick={() =>
+                handleChangeStatusUser(record.user_id, record.status)
+              }
+            >
+              {record.status == 1 ? <LockOutlined /> : <UnlockOutlined />}
+            </Button>
+          </Tooltip>
+          <Tooltip title="Xoá tài khoản" color="red">
+            <Button danger onClick={() => handleDeleteUser(record.user_id)}>
+              <DeleteOutlined />
+            </Button>
+          </Tooltip>
         </div>
       ),
     },
   ];
 
-  // get users data from database
   const fetchUsersData = () => {
     dispatch(getAllUsers());
   };

@@ -11,9 +11,18 @@ const cartSlice = createSlice({
   initialState: {
     data: JSON.parse(localStorage.getItem("myCart")) || [],
   },
+  reducers: {
+    clearCart: (state) => {
+      state.data = [];
+      localStorage.removeItem("myCart");
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(addToCart.fulfilled, (state, action) => {
+        if (action.payload.count < 1) {
+          return;
+        }
         state.data = state.data.map((p) => {
           return p.product.product_id === action.payload.product.product_id &&
             p.color.color_id === action.payload.color.color_id &&
@@ -36,7 +45,8 @@ const cartSlice = createSlice({
         state.data = state.data.map((p) => {
           return p.product.product_id === action.payload.product.product_id &&
             p.color.color_id === action.payload.color.color_id &&
-            p.size.size_id === action.payload.size.size_id
+            p.size.size_id === action.payload.size.size_id &&
+            p.count < p.size.quantity
             ? { ...p, count: p.count + 1 }
             : p;
         });
@@ -67,4 +77,5 @@ const cartSlice = createSlice({
   },
 });
 
+export const { clearCart } = cartSlice.actions;
 export default cartSlice.reducer;

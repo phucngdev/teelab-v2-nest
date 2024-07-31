@@ -5,6 +5,7 @@ import { message } from "antd";
 export const createOrder = createAsyncThunk("create/order", async (data) => {
   try {
     const response = await BaseUrl.post(`order/create`, data);
+    console.log("response", response);
     return response;
   } catch (error) {
     message.error("Lỗi server");
@@ -15,6 +16,7 @@ export const getOneOrder = createAsyncThunk("getOne/order", async (id) => {
   try {
     console.log(id);
     const response = await BaseUrl.get(`order/${id}`);
+    console.log(response);
     return response.data;
   } catch (error) {
     message.error("Lỗi server");

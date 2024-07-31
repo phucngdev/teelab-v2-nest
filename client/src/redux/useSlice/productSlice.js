@@ -3,6 +3,7 @@ import {
   deleteProduct,
   getAllProduct,
   getOneProduct,
+  searchProduct,
   updateProduct,
 } from "../../services/product.service";
 
@@ -11,6 +12,7 @@ const productSlice = createSlice({
   initialState: {
     data: [],
     dataEdit: null,
+    dataSearch: [],
     status: "idle",
     error: null,
   },
@@ -46,6 +48,17 @@ const productSlice = createSlice({
         state.data = action.payload;
       })
       .addCase(updateProduct.rejected, (state, action) => {
+        state.status = "Failed!";
+        state.error = action.error.message;
+      })
+      .addCase(searchProduct.pending, (state) => {
+        state.status = "Pending!";
+      })
+      .addCase(searchProduct.fulfilled, (state, action) => {
+        state.status = "Successfully!";
+        state.dataSearch = action.payload;
+      })
+      .addCase(searchProduct.rejected, (state, action) => {
         state.status = "Failed!";
         state.error = action.error.message;
       })

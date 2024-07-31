@@ -4,6 +4,7 @@ import { checkPaymentZalopay } from "../../services/payment.service";
 import { Button, Result } from "antd";
 import { useLocation, useParams } from "react-router-dom";
 import { LoadingOutlined } from "@ant-design/icons";
+import { clearCart } from "../../redux/useSlice/cartSlice";
 
 const PayCheck = () => {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ const PayCheck = () => {
   useEffect(() => {
     if (status) {
       setPending(false);
+      dispatch(clearCart());
     }
   }, [appTransId, status]);
 

@@ -14,9 +14,15 @@ export class ProductService {
   async createProductService(productDto: ProductDto) {
     return this.productRepos.createOne(productDto);
   }
+  async searchProductService(query: string) {
+    return await this.productRepos.search(query);
+  }
 
   async getOneService(id: string): Promise<Product> {
     return await this.productRepos.findById(id);
+  }
+  async deleteService(id: string): Promise<boolean> {
+    return !!(await this.productRepos.findByIdAndDelete(id));
   }
   async updateProductService(id: string, data: any): Promise<Product> {
     return await this.productRepos.updateProductRepo(id, data);

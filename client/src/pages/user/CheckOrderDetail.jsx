@@ -10,7 +10,6 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 const CheckOrderDetail = () => {
   const navigate = useNavigate();
-  const order = useSelector((state) => state.order.dataEdit);
   const { id } = useParams();
   const dispatch = useDispatch();
 
@@ -22,27 +21,29 @@ const CheckOrderDetail = () => {
     fetchData();
   }, [id]);
 
-  const listItem = order?.items?.map((product) => (
-    <div key={product._id} className="grid grid-cols-12 items-center py-[7px]">
+  const order = useSelector((state) => state.order.dataEdit);
+  console.log(order);
+  const listItem = order?.order_details?.map((product, index) => (
+    <div key={index} className="grid grid-cols-12 items-center py-[7px]">
       <div className="col-span-9 flex gap-2 items-center">
         <img
           className="w-[100px] h-[100px] object-cover"
-          src={product.item.thumbnail}
+          src={product.product.thumbnail}
           alt=""
         />
         <div className="flex flex-col items-start">
-          <div>{product.item.name}</div>
+          <div>{product.product.product_name}</div>
           <div className="flex gap-1 items-center">
-            <div>{product.color.color}</div>
+            <div>{product.color.color_name}</div>
             <div>/</div>
-            <div>{product.size.name}</div>
+            <div>{product.size.size_name}</div>
           </div>
         </div>
       </div>
       <div className="font-bold text-[#ff0000] text-center col-span-2">
-        {product?.item.price}
+        {formatPrice(product?.product.price)}
       </div>
-      <div className="col-span-1 text-center">x{product?.count}</div>
+      <div className="col-span-1 text-center">x{product?.quantity}</div>
     </div>
   ));
   return (
@@ -53,10 +54,10 @@ const CheckOrderDetail = () => {
       <div className="container mx-auto px-2 mt-[50px] md:mt-5">
         <h2 className="font-semibold text-xl mb-2">
           Đơn hàng của bạn -{" "}
-          {order?.status === "pending"
+          {order?.status === 1
             ? "Đang vận chuyển"
-            : order?.status === "successfully"
-            ? "Đã nhận"
+            : order?.status === 2
+            ? "Hoàn thành"
             : "Trả hàng"}
         </h2>
         <div className="flex flex-col md:flex-row md:items-center justify-between my-2">
@@ -67,7 +68,7 @@ const CheckOrderDetail = () => {
           <h3 className="mt-2 md:mt-0 text-lg flex items-center gap-2">
             Tổng giá trị đơn hàng:{" "}
             <span className="font-bold text-xl text-[#ff0000]">
-              {formatPrice(order?.total)}
+              {formatPrice(order?.total_amount)}
             </span>
           </h3>
         </div>

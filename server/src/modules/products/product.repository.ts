@@ -10,7 +10,7 @@ import { Color } from 'src/entities/color.entity';
 import { ColorSize } from 'src/entities/colorSize.entity';
 import { Product } from 'src/entities/product.entity';
 import { Size } from 'src/entities/size.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, DeleteResult, Like, Repository } from 'typeorm';
 
 @Injectable()
 export class ProductRepository {
@@ -26,6 +26,47 @@ export class ProductRepository {
     this.sizeRepos = dataSource.getRepository(Size);
     this.colorSizeRepos = dataSource.getRepository(ColorSize);
     this.categoryRepos = dataSource.getRepository(Category);
+  }
+
+  async search(query: string): Promise<Product[]> {
+    console.log(query);
+
+    const result = await this.productRepos.find({
+      where: {
+        product_name: Like(`%${query}%`),
+      },
+      relations: [
+        'colorSizes',
+        'colorSizes.colors',
+        'colorSizes.sizes',
+        'category',
+      ],
+    });
+    console.log(result);
+
+    return result;
+  }
+
+  async findByIdAndDelete(id: string): Promise<DeleteResult> {
+    try {
+      const product = await this.productRepos.findOne({
+        where: { product_id: id },
+        relations: ['colorSizes', 'colorSizes.colors', 'colorSizes.sizes'],
+      });
+
+      if (!product) {
+        throw new NotFoundException(`Product with id ${id} not found`);
+      }
+
+      await this.colorSizeRepos.delete({ product: { product_id: id } });
+
+      const result = await this.productRepos.delete(id);
+      console.log(result);
+
+      return result;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 
   async findAll(page: number, limit: number): Promise<Product[]> {
@@ -169,7 +210,6 @@ export class ProductRepository {
           'category',
         ],
       });
-      console.log(product, 'tìm thấy');
 
       if (!product) {
         throw new NotFoundException('Product not found');
@@ -186,7 +226,6 @@ export class ProductRepository {
         data.description_image || product.description_image;
       product.price = data.price || product.price;
       product.status = data.status || product.status;
-      console.log('gán produ');
 
       // Cập nhật danh mục nếu có thay đổi
       if (
@@ -196,14 +235,9 @@ export class ProductRepository {
         const category = await this.categoryRepos.findOne({
           where: { category_id: data.category.category_id },
         });
-        console.log('vào if');
-
         if (category) {
           product.category = category;
-          console.log('gán cate');
         } else {
-          console.log('ko có cate');
-
           throw new NotFoundException('Category not found');
         }
       }
@@ -262,7 +296,6 @@ export class ProductRepository {
           }
         }
       }
-      console.log(updatedProduct);
 
       return updatedProduct;
     } catch (error) {

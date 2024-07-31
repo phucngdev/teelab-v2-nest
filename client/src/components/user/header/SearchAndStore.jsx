@@ -1,22 +1,60 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import icon_incart from "../../../../public/icon_incart.svg";
 import { Avatar, Badge, Input, Popover } from "antd";
 import { DashOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import _debounce from "lodash/debounce";
+import { searchProduct } from "../../../services/product.service";
 
 const SearchAndStore = ({ user }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const cart = useSelector((state) => state.myCart.data);
-  console.log(cart);
+  const searchProducts = useSelector((state) => state.product.dataSearch);
+  const [search, setSearch] = useState("");
+  console.log(searchProducts);
+
+  useEffect(() => {
+    const debouncedFilter = _debounce(() => {
+      dispatch(searchProduct(search));
+    }, 300);
+    debouncedFilter();
+    return () => {
+      debouncedFilter.cancel();
+    };
+  }, [search]);
 
   return (
     <>
       <div className="hidden md:block py-[5px] bg-[#f5f5f5]">
         <div className="container mx-auto flex gap-2 justify-end items-center">
           <form className="relative h-10 flex items-center">
-            <Input placeholder="Tìm kiếm sản phẩm" />
+            <Input
+              placeholder="Tìm kiếm sản phẩm"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {searchProducts && search && (
+              <div className="w-[400px] absolute z-50 right-0 top-[100%] bg-white shadow-lg">
+                {searchProducts?.map((p) => (
+                  <div
+                    className="hover:shadow-lg hover:bg-slate-200 bg-white p-4 flex items-center gap-3 cursor-pointer"
+                    key={p.product_id}
+                    onClick={() => navigate(`/chi-tiet/${p.product_id}`)}
+                  >
+                    <img
+                      src={p.thumbnail}
+                      alt={p.product_name}
+                      className="w-10 "
+                    />
+                    {p.product_name}
+                  </div>
+                ))}
+              </div>
+            )}
           </form>
+
           {user ? (
             <>
               <div className="h-full w-10 relative group flex items-center justify-center">

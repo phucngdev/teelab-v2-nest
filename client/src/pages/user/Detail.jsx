@@ -36,6 +36,7 @@ const Detail = () => {
     color: option?.colors.color_name,
     size: size?.size_name,
     count: count,
+    quantity: size?.quantity,
   });
 
   useEffect(() => {
@@ -47,6 +48,7 @@ const Detail = () => {
       color: option?.colors,
       size: size,
       count: count,
+      quantity: size?.quantity,
     });
   }, [product]);
 
@@ -56,6 +58,7 @@ const Detail = () => {
       color: option?.colors,
       size: size,
       count: count,
+      quantity: size?.quantity,
     });
   }, [count, size, option, product]);
 
@@ -75,7 +78,12 @@ const Detail = () => {
       message.error("Vui lòng đăng nhập");
       return;
     }
-    message.success("ok");
+    if (addCart.count < 1) {
+      console.log("vào if");
+      message.error("Sản phẩm hết hàng");
+      return;
+    }
+    message.success("Thêm thành công");
     dispatch(addToCart(addCart));
   };
 

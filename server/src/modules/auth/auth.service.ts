@@ -76,6 +76,9 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new UnauthorizedException('Email or password is incorrect');
       }
+      if (userWithEmail.status === 0) {
+        throw new UnauthorizedException('User is blocked');
+      }
       const dataPayload: PayloadToken = {
         user_id: userWithEmail.user_id,
         user_name: userWithEmail.user_name,
@@ -103,6 +106,9 @@ export class AuthService {
       );
       if (!userWithEmail) {
         throw new UnauthorizedException('Login fail');
+      }
+      if (userWithEmail.status === 0) {
+        throw new UnauthorizedException('User is blocked');
       }
       const dataPayload: PayloadToken = {
         user_id: userWithEmail.user_id,

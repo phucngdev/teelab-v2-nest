@@ -43,10 +43,12 @@ export class OrderController {
     return await this.orderService.getAllNewOrdersService(status);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get('/:id')
   @HttpCode(200)
   async getOrderByIdController(@Param('id') orderId: string): Promise<Order> {
+    console.log('controller : ', orderId);
+
     return await this.orderService.getOrderByIdService(orderId);
   }
 
@@ -68,10 +70,14 @@ export class OrderController {
     @Headers('Authorization') header: string
   ): Promise<Order> {
     const token = header.replace('Bearer ', '');
+    console.log(token);
+
     if (!token) {
       throw new UnauthorizedException('Not found token');
     }
     const payloadToken = this.jwtService.decode(token);
+    console.log(payloadToken);
+
     return await this.orderService.createOrderService(
       data,
       payloadToken.user_id

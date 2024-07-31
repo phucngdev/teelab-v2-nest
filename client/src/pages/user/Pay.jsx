@@ -12,6 +12,7 @@ import { createOrder } from "../../services/order.service";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Helmet } from "react-helmet";
 import { zalopay } from "../../services/payment.service";
+import { clearCart } from "../../redux/useSlice/cartSlice";
 
 const { TextArea } = Input;
 
@@ -117,6 +118,7 @@ const Pay = () => {
           console.log(response);
           if (response.payload.status === 201) {
             setStatusOrder(true);
+            dispatch(clearCart());
           }
         } catch (error) {
           console.log(error);
@@ -366,6 +368,7 @@ const Pay = () => {
               </Link>
               <button
                 type="submit"
+                disabled={pending}
                 className="px-5 py-3 bg-black text-white rounded-md hover:opacity-70"
               >
                 ĐẶT HÀNG

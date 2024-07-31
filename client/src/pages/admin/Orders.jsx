@@ -93,7 +93,11 @@ const Orders = () => {
                     : "Hoàn thành"}
                 </button>
               </div>
-              <div className="border-t border-gray-200 my-4"></div>
+              {od.note && (
+                <div className="border-t border-gray-200 my-4">
+                  note: {od.note}
+                </div>
+              )}
               <div className="flex items-center text-gray-500 mb-4">
                 <FieldTimeOutlined />
                 <p className="ml-2">

@@ -21,13 +21,14 @@ const ListProduct = () => {
   console.log(categorys);
   const products = useSelector((state) => state.product.data);
   const [active, setActive] = useState("");
-
   const [listProduct, setListProduct] = useState([]);
 
-  useLayoutEffect(() => {
-    setListProduct(active === "Tất cả sản phẩm" && products.products);
+  useEffect(() => {
+    if (products) {
+      setListProduct(active === "Tất cả sản phẩm" && products?.products);
+    }
   }, [products, active]);
-  console.log(active);
+
   return (
     <>
       <div className="bg-white rounded-lg shadow p-4 md:p-6 xl:p-8 my-6">

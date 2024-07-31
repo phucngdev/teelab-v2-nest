@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -25,10 +26,22 @@ export class ProductController {
     return await this.productService.getAllProductsService(page, limit);
   }
 
+  @Get('/search')
+  @HttpCode(200)
+  async searchProductController(@Query('q') query: string) {
+    return await this.productService.searchProductService(query);
+  }
+
   @Get('/:id')
   @HttpCode(200)
   async GetOneController(@Param() id: any): Promise<Product> {
     return await this.productService.getOneService(id.id);
+  }
+
+  @Delete('delete/:id')
+  @HttpCode(200)
+  async DeleteController(@Param() id: any): Promise<boolean> {
+    return await this.productService.deleteService(id.id);
   }
 
   @Post('/create')

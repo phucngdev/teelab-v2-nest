@@ -54,7 +54,7 @@ export class UserController {
   ) {
     return await this.userService.updateUserService(id, userDto);
   }
-  
+
   @Put('/:id/status/:status')
   @HttpCode(200)
   async updateStatusController(
@@ -100,7 +100,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @UseGuards(RoleGuard)
+  // @UseGuards(RoleGuard)
   @Delete('/:id')
   @HttpCode(200)
   async deleteUserController(@Param('id') id: string): Promise<boolean> {

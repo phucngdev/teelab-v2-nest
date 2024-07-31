@@ -29,6 +29,8 @@ export class OrderService {
   }
 
   async createOrderService(data: any, token: string): Promise<Order> {
+    console.log(data, token);
+
     return this.orderRepos.createOne(data, token);
   }
 

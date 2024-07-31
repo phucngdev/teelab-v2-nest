@@ -48,6 +48,14 @@ export class PaymentRepository {
     endpoint: 'https://sb-openapi.zalopay.vn/v2/create', // chạy với dev
   };
 
+  formatPrice(p: number) {
+    const price = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    }).format(p);
+    return price;
+  }
+
   async sendOrderConfirmationEmail(order: Order): Promise<void> {
     let productDetails = '';
 
@@ -59,17 +67,24 @@ export class PaymentRepository {
         <td style="border: 1px solid #ddd; padding: 8px; text-align: center">${detail.color.color_name}</td>
         <td style="border: 1px solid #ddd; padding: 8px; text-align: center">${detail.size.size_name}</td>
         <td style="border: 1px solid #ddd; padding: 8px; text-align: center">${detail.quantity}</td>
-        <td style="border: 1px solid #ddd; padding: 8px; text-align: center">${detail.product.price}</td>
+        <td style="border: 1px solid #ddd; padding: 8px; text-align: center">${this.formatPrice(detail.product.price)}</td>
       </tr>
     `;
     }
 
     const template = `
     <div style="font-family: Arial, sans-serif; color: #333;">
-      <h1>Order Confirmation</h1>
+      <h1>Xác nhận đơn hàng</h1>
       <p>Hi ${order.name},</p>
       <p>Cảm ơn bạn đã đặt hàng, Mã đơn hàng của bạn là: <strong>${order.order_id}</strong>.</p>
-      <h2>Order Details:</h2>
+      <h2>Địa chỉ nhận hàng:</h2>
+      <p>Tỉnh/Thành phố: ${order.city}</p>
+      <p>Quận/Huyện: ${order.district}</p>
+      <p>Phường/Xã: ${order.ward}</p>
+      <p>Địa chỉ: ${order.address}</p>
+      <p>Số điện thoại: ${order.phone}</p>
+      <p>Ghi chú: ${order.note}</p>
+      <h2>Chi tiết sản phẩm:</h2>
       <table style="width: 100%; border-collapse: collapse;">
         <thead>
           <tr>
@@ -84,7 +99,8 @@ export class PaymentRepository {
           ${productDetails}
         </tbody>
       </table>
-      <p><strong>Tổng giá trị đơn hàng: </strong>${order.total_amount}</p>
+      <p>Phí vận chuyển: 20.000 đ</p>
+      <p><strong>Tổng giá trị đơn hàng: </strong>${this.formatPrice(order.total_amount)}</p>
       <p>Cảm ơn bạn đã tin tưởng và ủng hộ Teelab</p>
     </div>`;
     await this.mailerService.sendMail({
@@ -190,7 +206,6 @@ export class PaymentRepository {
         const orderData = JSON.parse(dataJson.embed_data);
         console.log(orderData);
 
-        // tạo order với status = 2
         const user = await this.useRepos.findOne({
           where: { user_id: orderData.user_id },
         });
@@ -209,15 +224,12 @@ export class PaymentRepository {
           city: orderData.city,
           district: orderData.district,
           ward: orderData.ward,
-          status: 2,
+          status: 0,
           user: user,
         });
-        console.log('order ', order);
 
         // Lưu đơn hàng chính vào cơ sở dữ liệu
         await this.orderRepos.save(order);
-        console.log('save order');
-        console.log(dataJson.item);
 
         // Xử lý các mục hàng trong đơn hàng
         for (const item of productData) {
@@ -232,7 +244,6 @@ export class PaymentRepository {
           const size = await this.sizeRepos.findOneBy({
             size_id: item.size_id,
           });
-          console.log('tìm thấy tt', size, color, product);
 
           const orderDetail = await this.orderDetailRepos.create({
             order: order,
@@ -242,11 +253,8 @@ export class PaymentRepository {
             quantity: item.count,
           });
           await this.orderDetailRepos.save(orderDetail);
-          console.log('save tt');
           size.quantity -= item.count;
-          console.log('trừ counrt');
           await this.sizeRepos.save(size);
-          console.log('save size');
         }
 
         const populatedOrder = await this.orderRepos.findOne({
@@ -260,7 +268,6 @@ export class PaymentRepository {
         });
 
         await this.sendOrderConfirmationEmail(populatedOrder);
-        console.log('Email xác nhận đơn hàng đã được gửi');
 
         result['return_code'] = 1;
         result['return_message'] = 'success';

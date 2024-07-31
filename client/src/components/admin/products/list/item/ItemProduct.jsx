@@ -1,11 +1,17 @@
-import { Button } from "antd";
+import { Button, message } from "antd";
 import React, { useMemo } from "react";
 import { EditOutlined, StopOutlined } from "@ant-design/icons";
 import formatPrice from "../../../../../utils/formatPrice";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import {
+  deleteProduct,
+  getAllProduct,
+} from "../../../../../services/product.service";
 
 const ItemProduct = ({ product }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const quantity = useMemo(() => {
     return product.colorSizes.reduce((total, colorSize) => {
@@ -15,6 +21,19 @@ const ItemProduct = ({ product }) => {
       );
     }, 0);
   }, [product]);
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await dispatch(deleteProduct(id));
+      console.log(response);
+      if (response.payload.status === 200) {
+        message.success("Xoá thành công");
+        await dispatch(getAllProduct());
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <>
       <div className="flex flex-col max-h-[100dvh] overflow-scroll">
@@ -44,7 +63,10 @@ const ItemProduct = ({ product }) => {
             >
               <EditOutlined />
             </Button>
-            <Button className="bg-red-600 text-white flex items-center justify-center">
+            <Button
+              onClick={() => handleDelete(product.product_id)}
+              className="bg-red-600 text-white flex items-center justify-center"
+            >
               <StopOutlined />
             </Button>
           </div>

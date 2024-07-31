@@ -10,8 +10,11 @@ import { useSelector } from "react-redux";
 const PrivateRouter = () => {
   const [isToken, setIsToken] = useState(() => {
     const checkToken = Cookies.get("AT") || false;
-    const { role } = jwtDecode(checkToken);
-    return role === 1 ? false : true;
+    if (checkToken) {
+      const { role } = jwtDecode(checkToken);
+      return role === 1 ? false : true;
+    }
+    return false;
   });
 
   const [user, setUser] = useState(() => {
