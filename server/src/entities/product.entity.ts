@@ -77,6 +77,6 @@ export class Product {
   @OneToMany(() => ColorSize, (colsiz) => colsiz.product)
   colorSizes: ColorSize[];
 
-  @ManyToMany(() => Cart, (cart) => cart.products)
-  cart: Cart[];
+  // @ManyToMany(() => Cart, (cart) => cart.products)
+  // cart: Cart[];
 }

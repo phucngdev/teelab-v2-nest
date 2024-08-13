@@ -9,7 +9,23 @@ export class CartService {
     // private readonly jwtService: JwtService
   ) {}
 
-  async getCartByIdService(id: string): Promise<Cart> {
-    return this.cartRepos.findCartById(id);
+  async getCartByIdService(userId: string): Promise<Cart> {
+    return this.cartRepos.findCartByUserId(userId);
+  }
+
+  async addToCartService(
+    userId: string,
+    productId: string,
+    colorSizeId: string,
+    sizeId: string,
+    quantity: number
+  ): Promise<Cart[]> {
+    return await this.cartRepos.addToCart(
+      userId,
+      productId,
+      colorSizeId,
+      sizeId,
+      quantity
+    );
   }
 }

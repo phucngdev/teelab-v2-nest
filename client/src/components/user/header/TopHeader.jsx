@@ -7,6 +7,7 @@ import { searchProduct } from "../../../services/product.service";
 import AuthButtons from "./AuthButtons";
 import SearchList from "./SearchList";
 import CartAndUserMenu from "./CartAndUserMenu";
+import { useDebounce } from "../../../hooks/useDebounce";
 
 const TopHeader = ({ user }) => {
   const navigate = useNavigate();
@@ -15,15 +16,13 @@ const TopHeader = ({ user }) => {
   const searchProducts = useSelector((state) => state.product.dataSearch);
   const [search, setSearch] = useState("");
 
+  const debouncedSearch = useDebounce(search, 300);
+
   useEffect(() => {
-    const debouncedFilter = _debounce(() => {
-      dispatch(searchProduct(search));
-    }, 300);
-    debouncedFilter();
-    return () => {
-      debouncedFilter.cancel();
-    };
-  }, [search]);
+    if (debouncedSearch) {
+      dispatch(searchProduct(debouncedSearch));
+    }
+  }, [debouncedSearch, dispatch]);
 
   return (
     <>

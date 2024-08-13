@@ -9,6 +9,7 @@ import { CategoryModule } from './modules/categories/category.module';
 import { OrderModule } from './modules/orders/order.module';
 import { PaymentModule } from './modules/payments/payment.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { CartModule } from './modules/cart/cart.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     CategoryModule,
     OrderModule,
     PaymentModule,
+    CartModule,
     BullModule.forRoot({
       redis: {
         host: 'localhost',

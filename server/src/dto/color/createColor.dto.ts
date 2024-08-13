@@ -1,9 +1,9 @@
-import { IsUrl } from "class-validator";
+import { IsString, IsUrl } from 'class-validator';
 
-export class CreateColorDto
-{
-    color_name: string;
+export class CreateColorDto {
+  @IsString()
+  color_name: string;
 
-    @IsUrl()
-    image: string[];
+  @IsUrl()
+  image: string[];
 }

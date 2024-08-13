@@ -10,6 +10,7 @@ import { DataSource } from 'typeorm';
 import { Payment } from 'src/entities/payment.entity';
 import { ColorSize } from 'src/entities/colorSize.entity';
 import { Cart } from 'src/entities/cart.entity';
+import { CartItem } from 'src/entities/cartItem.entity';
 
 export const ormProviders = [
   {
@@ -34,7 +35,9 @@ export const ormProviders = [
           Payment,
           ColorSize,
           Cart,
+          CartItem,
         ],
+        // entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
       });
 

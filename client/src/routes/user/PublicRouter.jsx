@@ -5,13 +5,10 @@ import Footer from "../../layouts/user/Footer";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import MessageButton from "../../components/user/message/MessageButton";
+import { useCookie } from "../../hooks/useCookie";
 
 const PublicRouter = () => {
-  const [user, setUser] = useState(() => {
-    const userCookie = Cookies.get("AT") ? Cookies.get("AT") : null;
-    const decoded = userCookie ? jwtDecode(userCookie) : "";
-    return decoded;
-  });
+  const user = useCookie("AT");
 
   return (
     <>
