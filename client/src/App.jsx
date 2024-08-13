@@ -27,6 +27,7 @@ import PayCheck from "./pages/user/PayCheck";
 import EditProduct from "./pages/admin/EditProduct";
 import User from "./pages/admin/User";
 import { useSelector } from "react-redux";
+import Message from "./pages/user/Message";
 
 function App() {
   const location = useLocation();
@@ -36,7 +37,6 @@ function App() {
   }, [location.pathname]);
 
   const categories = useSelector((state) => state.category.data);
-  console.log(categories);
 
   return (
     <>
@@ -52,43 +52,18 @@ function App() {
           <Route path="kiem-tra-don-hang/:id" element={<CheckOrderDetail />} />
           <Route path="bang-size" element={<Size />} />
           <Route path="chinh-sach-doi-tra" element={<Service />} />
+          <Route path="cham-soc-khac-hang/:id" element={<Message />} />
           <Route
             path="tat-ca-san-pham"
             element={<ListOfProduct category={"Tất cả sản phẩm"} />}
           />
-          <Route
-            path="ao-thun"
-            element={<ListOfProduct category={"Áo thun"} />}
-          />
-          <Route
-            path="ao-polo"
-            element={<ListOfProduct category={"Áo polo"} />}
-          />
-          <Route
-            path="baby-tee"
-            element={<ListOfProduct category={"Baby tee"} />}
-          />
-          <Route
-            path="ao-khoac"
-            element={<ListOfProduct category={"Áo khoác"} />}
-          />
-          <Route
-            path="ao-so-mi"
-            element={<ListOfProduct category={"Áo sơ mi"} />}
-          />
-          <Route
-            path="quan-nu"
-            element={<ListOfProduct category={"Quần nữ"} />}
-          />
-          <Route
-            path="hoodie"
-            element={<ListOfProduct category={"Hoodie"} />}
-          />
-          <Route path="quan" element={<ListOfProduct category={"Quần"} />} />
-          <Route
-            path="phu-kien"
-            element={<ListOfProduct category={"Phụ kiện"} />}
-          />
+          {categories?.map((c) => (
+            <Route
+              key={c.category_id}
+              path={c.path}
+              element={<ListOfProduct category={c.category_name} />}
+            />
+          ))}
         </Route>
         <Route path="/dang-nhap" element={<Login />} />
         <Route path="/dang-ky" element={<Register />} />

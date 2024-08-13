@@ -4,7 +4,6 @@ import { CategoryRepository } from './category.repository';
 import { CategoryService } from './category.service';
 import { CategoryController } from './category.controller';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule } from '@nestjs/config';
 import { UserModule } from '../users/user.module';
 
 @Module({

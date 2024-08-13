@@ -18,7 +18,7 @@ const ListProducts = ({ path, category }) => {
   const products = useSelector((state) => state.product.data);
 
   const [listProduct, setListProduct] = useState(() => {
-    const list = products.products
+    const list = products?.products
       ?.filter((p) => p.category.category_name === category.toLowerCase())
       .slice(0, 8);
     return list || [];
@@ -26,7 +26,7 @@ const ListProducts = ({ path, category }) => {
 
   useLayoutEffect(() => {
     setListProduct(
-      products.products
+      products?.products
         ?.filter((p) => p.category.category_name === category.toLowerCase())
         .slice(0, 8)
     );

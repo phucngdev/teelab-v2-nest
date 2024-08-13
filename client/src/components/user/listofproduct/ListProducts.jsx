@@ -6,7 +6,7 @@ import { getAllProduct } from "../../../services/product.service";
 
 const ListProducts = ({ category }) => {
   const dispatch = useDispatch();
-  // call api
+
   const fetchData = async () => {
     await dispatch(getAllProduct({ page: 0, limit: 0 }));
   };
@@ -27,7 +27,7 @@ const ListProducts = ({ category }) => {
   useEffect(() => {
     setListProduct(
       category === "Tất cả sản phẩm"
-        ? products.products
+        ? products?.products
         : products?.products?.filter(
             (p) => p.category.category_name === category.toLowerCase()
           )

@@ -47,8 +47,6 @@ export class OrderController {
   @Get('/:id')
   @HttpCode(200)
   async getOrderByIdController(@Param('id') orderId: string): Promise<Order> {
-    console.log('controller : ', orderId);
-
     return await this.orderService.getOrderByIdService(orderId);
   }
 

@@ -2,12 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToOne,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Order } from './order.entity';
 import { Product } from './product.entity';
+import { Cart } from './cart.entity';
 
 @Entity('users')
 export class User {
@@ -52,4 +54,7 @@ export class User {
 
   @ManyToMany(() => Product, (prod) => prod.author)
   products: Product[];
+
+  @OneToOne(() => Cart, (cart) => cart.user)
+  cart: Cart;
 }

@@ -9,6 +9,7 @@ import { User } from 'src/entities/user.entity';
 import { DataSource } from 'typeorm';
 import { Payment } from 'src/entities/payment.entity';
 import { ColorSize } from 'src/entities/colorSize.entity';
+import { Cart } from 'src/entities/cart.entity';
 
 export const ormProviders = [
   {
@@ -32,6 +33,7 @@ export const ormProviders = [
           Product,
           Payment,
           ColorSize,
+          Cart,
         ],
         synchronize: true,
       });

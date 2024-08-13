@@ -15,6 +15,7 @@ import { Size } from './size.entity';
 import { OrderDetail } from './orderDetail.entity';
 import { ColorSize } from './colorSize.entity';
 import { User } from './user.entity';
+import { Cart } from './cart.entity';
 
 @Entity('products')
 export class Product {
@@ -75,4 +76,7 @@ export class Product {
 
   @OneToMany(() => ColorSize, (colsiz) => colsiz.product)
   colorSizes: ColorSize[];
+
+  @ManyToMany(() => Cart, (cart) => cart.products)
+  cart: Cart[];
 }

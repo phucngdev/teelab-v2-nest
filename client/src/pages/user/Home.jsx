@@ -1,9 +1,24 @@
 import React, { useEffect } from "react";
 import Banner from "../../components/user/home/Banner";
 import ListProducts from "../../components/user/home/ListProducts";
+import { useDispatch, useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
+import { getAllProduct } from "../../services/product.service";
+import { Button, Result } from "antd";
+import { SmileOutlined } from "@ant-design/icons";
 
 const Home = () => {
+  const dispatch = useDispatch();
+
+  const fetchData = async () => {
+    await dispatch(getAllProduct({ page: 0, limit: 0 }));
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const category = useSelector((state) => state.category.data);
+
   return (
     <>
       <Helmet>
@@ -21,15 +36,17 @@ const Home = () => {
           trẻ trung.
         </div>
       </div>
-      <ListProducts path="/ao-thun" category="Áo thun" />
-      <ListProducts path="/ao-polo" category="Áo polo" />
-      <ListProducts path="/baby-tee" category="Baby Tee" />
-      <ListProducts path="/ao-so-mi" category="Áo sơ mi" />
-      <ListProducts path="/ao-khoac" category="Áo khoác" />
-      <ListProducts path="/hoodie" category="Hoodie" />
-      <ListProducts path="/quan" category="Quần" />
-      <ListProducts path="/quan-nu" category="Quần nữ" />
-      <ListProducts path="/phu-kien" category="Phụ kiện" />
+      {category ? (
+        category.map((c) => (
+          <ListProducts path={`/${c.path}`} category={c.category_name} />
+        ))
+      ) : (
+        <Result
+          icon={<SmileOutlined />}
+          title="Website đang bảo trì, xin lỗi vì sự bất tiện này"
+          extra={<Button type="primary">Vui lòng quay lại sau</Button>}
+        />
+      )}
     </>
   );
 };

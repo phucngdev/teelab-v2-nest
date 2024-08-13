@@ -4,6 +4,7 @@ import Header from "../../layouts/user/Header";
 import Footer from "../../layouts/user/Footer";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
+import MessageButton from "../../components/user/message/MessageButton";
 
 const PublicRouter = () => {
   const [user, setUser] = useState(() => {
@@ -16,6 +17,7 @@ const PublicRouter = () => {
     <>
       <Header user={user} />
       <Outlet context={user} />
+      <MessageButton user={user} />
       <Footer />
     </>
   );
